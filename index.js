@@ -207,8 +207,19 @@ const userGetJoinTable = (request, response) => {
 
       console.log('Query result:', result);
 
-      // redirect to home page
-      response.redirect('/');
+      let queryStringTwo = 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.pokemon_id = pokemon.id) WHERE user_pokemon.user_id =' + request.body.user_id;
+
+      pool.query(queryStringTwo, (error, res) => {
+        if (error) {
+            console.error('Query error:', error.stack);
+            response.send('dang it.');
+        } else {
+            // redirect to home page
+            console.log('RESULTTTTT:', res.rows);
+            response.render('users/show', {assoc: res.rows});
+        }
+      })
+
     }
   });
 
