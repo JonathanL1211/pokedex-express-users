@@ -14,7 +14,7 @@ const pg = require('pg');
 
 // Initialise postgres client
 const config = {
-  user: 'akira',
+  user: 'jonathanlau',
   host: '127.0.0.1',
   database: 'pokemons',
   port: 5432,
@@ -94,7 +94,7 @@ const getPokemon = (request, response) => {
 
 const postPokemon = (request, response) => {
   let params = request.body;
-  
+
   const queryString = 'INSERT INTO pokemon(name, height) VALUES($1, $2);';
   const values = [params.name, params.height];
 
