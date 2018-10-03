@@ -10,7 +10,7 @@ class Catch extends React.Component {
       <html>
         <head />
         <body>
-          <form className="user-form" method="POST" action="/users">
+          <form className="user-form" method="POST" action="/users/join">
             <div className="user-attribute">
               User ID:<input name="user_id" type="text" />
             </div>

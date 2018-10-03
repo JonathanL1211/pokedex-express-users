@@ -2,28 +2,17 @@ var React = require("react");
 
 class Pokemon extends React.Component {
   render() {
+    console.log('THIS.PROPS for pokemon: ', this.props);
+    const mapPokemon = this.props.pokemon.map(pokemon =>{
+        return <li>{pokemon.name}</li>
+    });
     return (
       <html>
         <head />
         <body>
           <div>
             <ul className="pokemon-list">
-              <li className="pokemon-attribute">
-                id: {this.props.pokemon.id}
-              </li>
-              <li className="pokemon-attribute">
-                name: {this.props.pokemon.name}
-              </li>
-              <li className="pokemon-attribute">
-                img: {this.props.pokemon.img}
-              </li>
-              <li className="pokemon-attribute">
-                height: {this.props.pokemon.height}
-              </li>
-              <li className="pokemon-attribute">
-                weight: {this.props.pokemon.weight}
-              </li>
-
+              <p>List of name who had captured this pokemon: {mapPokemon}</p>
             </ul>
           </div>
         </body>

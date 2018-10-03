@@ -76,10 +76,11 @@ app.engine('jsx', reactEngine);
 const getNew = (request, response) => {
   response.render('pokemon/new');
 }
-
+//show route of pokemon
 const getPokemon = (request, response) => {
   let id = request.params['id'];
-  const queryString = 'SELECT * FROM pokemon WHERE id = ' + id + ';';
+  const queryString = 'SELECT user_pokemon.pokemon_id, users.name FROM users INNER JOIN user_pokemon ON (user_pokemon.user_id = users.id) WHERE user_pokemon.pokemon_id = ' + id + ';';
+
   pool.query(queryString, (err, result) => {
     if (err) {
       console.error('Query error:', err.stack);
@@ -87,7 +88,7 @@ const getPokemon = (request, response) => {
       console.log('Query result:', result);
 
       // redirect to home page
-      response.render( 'pokemon/pokemon', {pokemon: result.rows[0]} );
+      response.render( 'pokemon/pokemon', {pokemon: result.rows} );
     }
   });
 }
@@ -117,7 +118,7 @@ const editPokemonForm = (request, response) => {
     if (err) {
       console.error('Query error:', err.stack);
     } else {
-      console.log('Query result:', result);
+      console.log('Query result:', result.rows);
 
       // redirect to home page
       response.render( 'pokemon/edit', {pokemon: result.rows[0]} );
@@ -184,11 +185,12 @@ const userCreate = (request, response) => {
     }
   });
 }
-
+//user catches a pokemon
 const userCatch = (request, response) => {
     response.render('users/catch');
 }
 
+//the pokemon is then inserted into the join table
 const userGetJoinTable = (request, response) => {
 
     console.log('request.BODY: ', request.body);
@@ -208,7 +210,7 @@ const userGetJoinTable = (request, response) => {
     } else {
 
       console.log('Query result:', result);
-      response.render('users/show', {assoc: result.rows});
+      response.render('users/join', {assoc: result.rows});
 
     }
   });
@@ -216,7 +218,7 @@ const userGetJoinTable = (request, response) => {
    // 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.user_id = users.id) WHERE user_pokemon.user_id = users.id';
 
 }
-
+//displaying the pokemon captured
 const userIdPage = (request, response) => {
     let queryStringTwo = 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.pokemon_id = pokemon.id) WHERE user_pokemon.user_id =' + request.params.id;
 
@@ -254,11 +256,11 @@ app.delete('/pokemon/:id', deletePokemon);
 
 // TODO: New routes for creating users
 
-// app.get('/users/new', userNew);
-// app.post('/users', userCreate);
+app.get('/users/new', userNew);
+app.post('/users', userCreate);
 
 app.get('/users/catch', userCatch);
-app.post('/users', userGetJoinTable);
+app.post('/users/join', userGetJoinTable);
 app.get('/users/:id', userIdPage);
 
 
