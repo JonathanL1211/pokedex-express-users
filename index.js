@@ -185,6 +185,37 @@ const userCreate = (request, response) => {
   });
 }
 
+const userCatch = (request, response) => {
+    response.render('users/catch');
+}
+
+const userGetJoinTable = (request, response) => {
+
+    console.log('request.BODY: ', request.body);
+
+    const queryString = 'INSERT INTO user_pokemon (user_id, pokemon_id) VALUES ($1, $2)';
+
+    const values = [request.body.user_id, request.body.pokemon_id];
+
+    pool.query(queryString, values, (err, result) => {
+
+    if (err) {
+
+      console.error('Query error:', err.stack);
+      response.send('dang it.');
+    } else {
+
+      console.log('Query result:', result);
+
+      // redirect to home page
+      response.redirect('/');
+    }
+  });
+
+   // 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.user_id = users.id) WHERE user_pokemon.user_id = users.id';
+
+}
+
 /**
  * ===================================
  * Routes
@@ -206,8 +237,11 @@ app.delete('/pokemon/:id', deletePokemon);
 
 // TODO: New routes for creating users
 
-app.get('/users/new', userNew);
-app.post('/users', userCreate);
+// app.get('/users/new', userNew);
+// app.post('/users', userCreate);
+
+app.get('/users/catch', userCatch);
+app.post('/users', userGetJoinTable);
 
 /**
  * ===================================
