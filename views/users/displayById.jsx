@@ -7,16 +7,18 @@ class Display extends React.Component {
     console.log('Userquote: ', userQuote);
     const userHeader = 'List of pokemon that User ' + userQuote + ' caught: ';
     const pokeList = this.props.assoc.map(pokemon => {
-        return <li>{pokemon.name}</li>
+        return <option>{pokemon.name}</option>
     })
     return (
       <html>
         <head />
         <body>
           <h1> {userHeader}</h1>
-          <ul>
+          <form>
+            <select>
               {pokeList}
-          </ul>
+            </select>
+          </form>
         </body>
       </html>
     );
