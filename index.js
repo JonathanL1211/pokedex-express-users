@@ -193,6 +193,8 @@ const userGetJoinTable = (request, response) => {
 
     console.log('request.BODY: ', request.body);
 
+   // let request.params.id = request.body.user_id;
+
     const queryString = 'INSERT INTO user_pokemon (user_id, pokemon_id) VALUES ($1, $2)';
 
     const values = [request.body.user_id, request.body.pokemon_id];
@@ -206,25 +208,29 @@ const userGetJoinTable = (request, response) => {
     } else {
 
       console.log('Query result:', result);
-
-      let queryStringTwo = 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.pokemon_id = pokemon.id) WHERE user_pokemon.user_id =' + request.body.user_id;
-
-      pool.query(queryStringTwo, (error, res) => {
-        if (error) {
-            console.error('Query error:', error.stack);
-            response.send('dang it.');
-        } else {
-            // redirect to home page
-            console.log('RESULTTTTT:', res.rows);
-            response.render('users/show', {assoc: res.rows});
-        }
-      })
+      response.render('users/show', {assoc: result.rows});
 
     }
   });
 
    // 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.user_id = users.id) WHERE user_pokemon.user_id = users.id';
 
+}
+
+const userIdPage = (request, response) => {
+    let queryStringTwo = 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.pokemon_id = pokemon.id) WHERE user_pokemon.user_id =' + request.params.id;
+
+    pool.query(queryStringTwo, (error, res) => {
+        if (error) {
+            console.error('Query error:', error.stack);
+            response.send('dang it.');
+        } else {
+            // redirect to home page
+            console.log('RESULTTTTT:', res.rows);
+            response.render('users/displayById', {assoc: res.rows});
+
+        }
+    })
 }
 
 /**
@@ -253,6 +259,8 @@ app.delete('/pokemon/:id', deletePokemon);
 
 app.get('/users/catch', userCatch);
 app.post('/users', userGetJoinTable);
+app.get('/users/:id', userIdPage);
+
 
 /**
  * ===================================
