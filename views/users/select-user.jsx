@@ -1,6 +1,6 @@
 var React = require("react");
 
-class New extends React.Component {
+class selectUser extends React.Component {
   render() {
     return (
       <html>
@@ -8,14 +8,14 @@ class New extends React.Component {
         <body>
           <form method="POST" action="/">
             <div>
-              name:<input name="name" type="text" />
+              user ID: <input name="id" type="text" />
             </div>
             <input type="submit" value="Submit" />
-          </form>
+            </form>
         </body>
       </html>
     );
   }
 }
 
-module.exports = New;
+module.exports = selectUser;

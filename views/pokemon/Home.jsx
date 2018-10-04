@@ -8,13 +8,13 @@ class Home extends React.Component {
         <head />
         <body>
           <h1>Welcome to Pokedex</h1>
-          <ul>
+          <ol>
             {this.props.pokemon.map(pokemon => (
               <li key={pokemon.id}>
                 {pokemon.name}
               </li>
             ))}
-          </ul>
+          </ol>
         </body>
       </html>
     );

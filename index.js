@@ -55,27 +55,26 @@ app.engine('jsx', reactEngine);
  * ===================================
  */
 
- const getRoot = (request, response) => {
+const getRoot = (request, response) => {
   // query database for all pokemon
-
   // respond with HTML page displaying all pokemon
-  //
   const queryString = 'SELECT * from pokemon;';
   pool.query(queryString, (err, result) => {
     if (err) {
       console.error('Query error:', err.stack);
     } else {
-      console.log('Query result:', result);
-
+      //console.log('Query result:', result);
       // redirect to home page
       response.render( 'pokemon/home', {pokemon: result.rows} );
     }
   });
 }
 
+//Get new pokemon
 const getNew = (request, response) => {
   response.render('pokemon/new');
 }
+
 //show route of pokemon
 const getPokemon = (request, response) => {
   let id = request.params['id'];
@@ -85,13 +84,35 @@ const getPokemon = (request, response) => {
     if (err) {
       console.error('Query error:', err.stack);
     } else {
-      console.log('Query result:', result);
+      //console.log('Query result:', result);
 
       // redirect to home page
       response.render( 'pokemon/pokemon', {pokemon: result.rows} );
     }
   });
 }
+
+//edit pokemon form
+const editPokemonForm = (request, response) => {
+  let id = request.params['id'];
+  const queryString = 'SELECT * FROM pokemon WHERE id = ' + id + ';';
+  pool.query(queryString, (err, result) => {
+    if (err) {
+      console.error('Query error:', err.stack);
+    } else {
+      //console.log('Query result:', result.rows);
+
+      // redirect to home page
+      response.render( 'pokemon/edit', {pokemon: result.rows[0]} );
+    }
+  });
+}
+
+//Form to delete pokemon
+const deletePokemonForm = (request, response) => {
+  response.send("COMPLETE ME");
+}
+
 
 const postPokemon = (request, response) => {
   let params = request.body;
@@ -103,7 +124,7 @@ const postPokemon = (request, response) => {
     if (err) {
       console.log('query error:', err.stack);
     } else {
-      console.log('query result:', result);
+      //console.log('query result:', result);
 
       // redirect to home page
       response.redirect('/');
@@ -111,20 +132,7 @@ const postPokemon = (request, response) => {
   });
 };
 
-const editPokemonForm = (request, response) => {
-  let id = request.params['id'];
-  const queryString = 'SELECT * FROM pokemon WHERE id = ' + id + ';';
-  pool.query(queryString, (err, result) => {
-    if (err) {
-      console.error('Query error:', err.stack);
-    } else {
-      console.log('Query result:', result.rows);
 
-      // redirect to home page
-      response.render( 'pokemon/edit', {pokemon: result.rows[0]} );
-    }
-  });
-}
 
 const updatePokemon = (request, response) => {
   let id = request.params['id'];
@@ -136,7 +144,7 @@ const updatePokemon = (request, response) => {
     if (err) {
       console.error('Query error:', err.stack);
     } else {
-      console.log('Query result:', result);
+      //console.log('Query result:', result);
 
       // redirect to home page
       response.redirect('/');
@@ -144,16 +152,14 @@ const updatePokemon = (request, response) => {
   });
 }
 
-const deletePokemonForm = (request, response) => {
-  response.send("COMPLETE ME");
-}
 
 const deletePokemon = (request, response) => {
   response.send("COMPLETE ME");
 }
+
 /**
  * ===================================
- * User
+ * User route
  * ===================================
  */
 
@@ -162,13 +168,14 @@ const userNew = (request, response) => {
   response.render('users/new');
 }
 
+
 const userCreate = (request, response) => {
 
   const queryString = 'INSERT INTO users (name) VALUES ($1)';
 
   const values = [request.body.name];
 
-  console.log(queryString);
+  //console.log(queryString);
 
   pool.query(queryString, values, (err, result) => {
 
@@ -178,24 +185,24 @@ const userCreate = (request, response) => {
       response.send('dang it.');
     } else {
 
-      console.log('Query result:', result);
-
+      //console.log('Query result:', result);
       // redirect to home page
       response.redirect('/');
     }
   });
 }
+
+
 //user catches a pokemon
 const userCatch = (request, response) => {
     response.render('users/catch');
 }
 
+
 //the pokemon is then inserted into the join table
 const userGetJoinTable = (request, response) => {
 
-    console.log('request.BODY: ', request.body);
-
-   // let request.params.id = request.body.user_id;
+    //console.log('request.BODY: ', request.body);
 
     const queryString = 'INSERT INTO user_pokemon (user_id, pokemon_id) VALUES ($1, $2)';
 
@@ -208,16 +215,15 @@ const userGetJoinTable = (request, response) => {
       console.error('Query error:', err.stack);
       response.send('dang it.');
     } else {
-
-      console.log('Query result:', result);
-      response.render('users/join', {assoc: result.rows});
+      //console.log('Query result:', result.rows);
+      //response.redirect(`/users/${r}`)
+      response.render('users/join'); //which indicates "added successfulluy";
 
     }
   });
-
-   // 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.user_id = users.id) WHERE user_pokemon.user_id = users.id';
-
 }
+
+
 //displaying the pokemon captured
 const userIdPage = (request, response) => {
     let queryStringTwo = 'SELECT user_pokemon.user_id, pokemon.name FROM pokemon INNER JOIN user_pokemon ON (user_pokemon.pokemon_id = pokemon.id) WHERE user_pokemon.user_id =' + request.params.id;
@@ -228,12 +234,13 @@ const userIdPage = (request, response) => {
             response.send('dang it.');
         } else {
             // redirect to home page
-            console.log('RESULTTTTT:', res.rows);
+            //console.log('RESULTTTTT:', res.rows);
             response.render('users/displayById', {assoc: res.rows});
-
         }
     })
 }
+
+
 
 /**
  * ===================================
@@ -241,11 +248,12 @@ const userIdPage = (request, response) => {
  * ===================================
  */
 
-app.get('/', getRoot);
 
-app.get('/pokemon/:id/edit', editPokemonForm);
+
+app.get('/', getRoot);
 app.get('/pokemon/new', getNew);
 app.get('/pokemon/:id', getPokemon);
+app.get('/pokemon/:id/edit', editPokemonForm);
 app.get('/pokemon/:id/delete', deletePokemonForm);
 
 app.post('/pokemon', postPokemon);
@@ -257,11 +265,14 @@ app.delete('/pokemon/:id', deletePokemon);
 // TODO: New routes for creating users
 
 app.get('/users/new', userNew);
-app.post('/users', userCreate);
+app.post('/users/join', userCreate);
 
 app.get('/users/catch', userCatch);
-app.post('/users/join', userGetJoinTable);
+app.post('/users', userGetJoinTable);
 app.get('/users/:id', userIdPage);
+
+
+
 
 
 /**
