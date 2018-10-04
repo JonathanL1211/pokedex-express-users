@@ -49,6 +49,10 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'jsx');
 app.engine('jsx', reactEngine);
 
+
+//hash value for password
+var sha256 = require('js-sha256');
+
 /**
  * ===================================
  * Route Handler Functions
@@ -171,9 +175,11 @@ const userNew = (request, response) => {
 
 const userCreate = (request, response) => {
 
-  const queryString = 'INSERT INTO users (name) VALUES ($1)';
+  const queryString = 'INSERT INTO users (name, password) VALUES ($1, $2) RETURNING id';
 
-  const values = [request.body.name];
+  var hashedValue = sha256(request.body.password);
+
+  const values = [request.body.name, hashedValue];
 
   //console.log(queryString);
 
@@ -183,11 +189,13 @@ const userCreate = (request, response) => {
 
       console.error('Query error:', err.stack);
       response.send('dang it.');
-    } else {
-
-      //console.log('Query result:', result);
-      // redirect to home page
-      response.redirect('/');
+    }
+    else {
+        // tell the browser to set a cookie
+        response.cookie('loggedin', 'true');
+        //console.log('Query result:', result);
+        let createdId = result.rows[0].id;
+        response.send('WORKS!!!: ' + createdId);
     }
   });
 }
@@ -265,11 +273,11 @@ app.delete('/pokemon/:id', deletePokemon);
 // TODO: New routes for creating users
 
 app.get('/users/new', userNew);
-app.post('/users/join', userCreate);
+app.post('/users', userCreate);
 
-app.get('/users/catch', userCatch);
-app.post('/users', userGetJoinTable);
-app.get('/users/:id', userIdPage);
+// app.get('/users/catch', userCatch);
+// app.post('/users', userGetJoinTable);
+// app.get('/users/:id', userIdPage);
 
 
 
