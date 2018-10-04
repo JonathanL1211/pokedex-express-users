@@ -227,7 +227,10 @@ const testCookie = (request, response) => {
     // response.send('testing cookies!');
 };
 
-//const
+const loggedOutRoute = (request, response) => {
+    response.clearCookie('loggedin');
+    response.send('YOU ARE LOGGED OUT!');
+}
 
 
 //user catches a pokemon
@@ -304,7 +307,10 @@ app.delete('/pokemon/:id', deletePokemon);
 app.get('/users/new', userNew);
 app.post('/users/login', userCreate);
 app.get('/users/login', loginPage);
+app.post('/users', testCookie);
 app.get('/users', testCookie);
+
+app.get('/users/logout', loggedOutRoute);
 
 
 // app.get('/users/catch', userCatch);
