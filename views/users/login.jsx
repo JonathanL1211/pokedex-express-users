@@ -5,7 +5,7 @@ class Login extends React.Component {
     return (
       <div>
         <h1>Login</h1>
-        <form action="/users" method="POST">
+        <form action="/users/status" method="POST">
             <p>
                 Name: <input type="text" name="name" />
             </p>

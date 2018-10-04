@@ -195,8 +195,6 @@ const userCreate = (request, response) => {
       response.send('dang it.');
     }
     else {
-        // tell the browser to set a cookie
-        response.cookie('loggedin', 'true');
         //console.log('Query result:', result);
         let createdId = result.rows[0].id;
         //response.send('WORKS!!!: ' + createdId);
@@ -209,10 +207,45 @@ const loginPage = (request, response) => {
     response.render ('users/login');
 }
 
+const loginPageStatus = (request, response) => {
+    console.log('REQUEST.BODY IS: ', request.body);
+
+    let hashedValuePassWord = sha256(request.body.password);
+
+    console.log('HASHED VALUE = ', hashedValuePassWord );
+    let trimName = request.body.name.trim(); //trim name so that whitespace doesnt matter for name
+    let queryString = "SELECT * from users WHERE name = '" + trimName + "';";
+
+    pool.query(queryString, (error, res) => {
+        //console.log("RES: ", res);
+        console.log("RES.rows: ",res.rows);
+        if (error) {
+            console.error('Query error:', error.stack);
+        } else {
+            //console.log(res.rows[0].id);
+            if (Object.keys(res.rows).length == 0){
+                response.send("Cannot find username!");
+            }
+            else {
+                let user_id = res.rows[0].id;
+                if(hashedValuePassWord === res.rows[0].password){
+                    response.cookie('ID cookie ', user_id);
+                    response.send("Successfully logged in!");
+                }
+
+                else{
+                    response.send('PASSWORD DOES NOT MATCHED! PLEASE TRY AGAIN!');
+                    //response.redirect('/users/login'); //Somehow still got a cookie added!
+                }
+            }
+        }
+    })
+}
+
 
 const testCookie = (request, response) => {
 
-    console.log("COOKIE TEST: ", request.cookies);
+    //console.log("COOKIE TEST: ", request.cookies);
 
     let message = "Welcome to our site!"
     if( request.cookies['loggedin'] === 'true'){
@@ -305,10 +338,15 @@ app.delete('/pokemon/:id', deletePokemon);
 // TODO: New routes for creating users
 
 app.get('/users/new', userNew);
+//create the details into the database then refirect to login page
 app.post('/users/login', userCreate);
 app.get('/users/login', loginPage);
-app.post('/users', testCookie);
+//post the loginpage to test cookie
+app.post('/users/status', loginPageStatus);
 app.get('/users', testCookie);
+
+
+
 
 app.get('/users/logout', loggedOutRoute);
 
