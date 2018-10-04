@@ -199,9 +199,14 @@ const userCreate = (request, response) => {
         response.cookie('loggedin', 'true');
         //console.log('Query result:', result);
         let createdId = result.rows[0].id;
-        response.send('WORKS!!!: ' + createdId);
+        //response.send('WORKS!!!: ' + createdId);
+        response.redirect('/users/login');
     }
   });
+}
+
+const loginPage = (request, response) => {
+    response.render ('users/login');
 }
 
 
@@ -221,6 +226,8 @@ const testCookie = (request, response) => {
     response.send(message);
     // response.send('testing cookies!');
 };
+
+//const
 
 
 //user catches a pokemon
@@ -295,8 +302,10 @@ app.delete('/pokemon/:id', deletePokemon);
 // TODO: New routes for creating users
 
 app.get('/users/new', userNew);
-app.post('/users', userCreate);
+app.post('/users/login', userCreate);
+app.get('/users/login', loginPage);
 app.get('/users', testCookie);
+
 
 // app.get('/users/catch', userCatch);
 // app.post('/users', userGetJoinTable);
