@@ -5,12 +5,13 @@ class NewUser extends React.Component {
     return (
       <div>
         <h1>New User - Register</h1>
+        <h2>Please enter your desired username and password</h2>
         <form action="/users" method="POST">
             <p>
-                name: <input type="text" name="name" />
+                Name: <input type="text" name="name" />
             </p>
             <p>
-                password: <input type="text" name="password" />
+                Password: <input type="text" name="password" />
             </p>
             <input type="submit"/>
         </form>

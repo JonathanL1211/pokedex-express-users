@@ -53,6 +53,10 @@ app.engine('jsx', reactEngine);
 //hash value for password
 var sha256 = require('js-sha256');
 
+//cookie parser
+const cookieParser = require('cookie-parser')
+app.use(cookieParser());
+
 /**
  * ===================================
  * Route Handler Functions
@@ -162,9 +166,9 @@ const deletePokemon = (request, response) => {
 }
 
 /**
- * ===================================
+ * =================================================================================================
  * User route
- * ===================================
+ * =================================================================================================
  */
 
 
@@ -199,6 +203,24 @@ const userCreate = (request, response) => {
     }
   });
 }
+
+
+const testCookie = (request, response) => {
+
+    console.log("COOKIE TEST: ", request.cookies);
+
+    let message = "Welcome to our site!"
+    if( request.cookies['loggedin'] === 'true'){
+        message += ' You are logged in!';
+        // response.send('you are logged in!');
+    }else{
+        message += ' You are NOT logged in';
+        // response.redirect('/')
+        // response.send('you are not logged in!');
+    }
+    response.send(message);
+    // response.send('testing cookies!');
+};
 
 
 //user catches a pokemon
@@ -274,6 +296,7 @@ app.delete('/pokemon/:id', deletePokemon);
 
 app.get('/users/new', userNew);
 app.post('/users', userCreate);
+app.get('/users', testCookie);
 
 // app.get('/users/catch', userCatch);
 // app.post('/users', userGetJoinTable);
