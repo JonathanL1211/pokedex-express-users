@@ -172,11 +172,6 @@ const deletePokemon = (request, response) => {
  */
 
 
-const userNew = (request, response) => {
-  response.render('users/new');
-}
-
-
 const userCreate = (request, response) => {
 
   const queryString = 'INSERT INTO users (name, password) VALUES ($1, $2) RETURNING id';
@@ -337,7 +332,7 @@ app.delete('/pokemon/:id', deletePokemon);
 
 // TODO: New routes for creating users
 
-app.get('/users/new', userNew);
+
 //create the details into the database then refirect to login page
 app.post('/users/login', userCreate);
 app.get('/users/login', loginPage);
@@ -355,7 +350,9 @@ app.get('/users/logout', loggedOutRoute);
 // app.post('/users', userGetJoinTable);
 // app.get('/users/:id', userIdPage);
 
-
+//build it to routes.js
+var reRoute = require('./routes') (app, pool);
+//reRoute( app, pool);
 
 
 
